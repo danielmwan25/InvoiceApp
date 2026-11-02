@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: invoice-app
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn InvoiceApp:app --bind 0.0.0.0:$PORT --workers 1 --threads 4
+    healthCheckPath: /healthz
+    disk:
+      name: invoice-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: INVOICE_DB
+        value: /var/data/invoices.sqlite3
+      - key: COOKIE_SECURE
+        value: "true"
